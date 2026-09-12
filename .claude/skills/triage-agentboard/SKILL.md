@@ -97,7 +97,7 @@ a sinalizar, não a resolver aqui.
 - Não simula estado do Linear usando labels do GitHub (`status:*` etc.) —
   todo estado de fluxo é lido e gravado no Linear.
 - Não move a issue além de `Triagem` (decidir `ToDo`, `In Progress` etc. é
-  responsabilidade de `prepare-for-codex`/`implement-agentboard-issue`).
+  responsabilidade de `prepare-agentboard-issue`/`implement-agentboard-issue`).
 - Não invente critérios de aceite que o autor da issue não sustentaria — se
   algo for ambíguo, deixe como pergunta aberta na própria issue em vez de
   adivinhar.

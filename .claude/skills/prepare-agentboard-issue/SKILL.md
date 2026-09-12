@@ -1,9 +1,9 @@
 ---
-name: prepare-for-codex
-description: Prepara uma issue do Linear (time AgentBoard, ex. AGB-10) já em Triagem para execução autônoma - confirma objetivo/escopo/exclusões, identifica arquivos e componentes prováveis, define comandos de verificação e aplica a label Linear agent:ready quando a issue estiver executável, movendo-a para ToDo. Use depois de triage-agentboard e antes de implement-agentboard-issue.
+name: prepare-agentboard-issue
+description: "Prepara uma issue do Linear do time AgentBoard para execução por um agente: completa o handoff, valida dependências e critérios, e só então aplica agent:ready e move Triagem para ToDo. Use depois de triage-agentboard e antes de implement-agentboard-issue; não implementa código."
 ---
 
-# prepare-for-codex
+# prepare-agentboard-issue
 
 Transforma uma issue já triada do Linear em uma issue executável por um
 agente, sem implementar nada. Pressupõe que `triage-agentboard` já rodou
@@ -16,12 +16,15 @@ Depende das ferramentas `mcp__linear__get_issue`, `mcp__linear__save_issue`,
 `mcp__linear__list_issue_labels`, `mcp__linear__create_issue_label`,
 `mcp__linear__save_comment`, `mcp__linear__list_issue_statuses`. Se não
 estiverem disponíveis, pare e explique como configurar o conector do Linear
-(ver a mesma seção em `triage-agentboard/SKILL.md`) — não use `gh issue` como
-substituto.
+(ver a mesma seção em `triage-agentboard/SKILL.md`) — não use GitHub Issues
+como substituto.
 
 ## Entrada
 
 Identificador da issue (`AGB-N`).
+
+Valide o identificador como `AGB-[1-9][0-9]*`. Não aceite apenas um número e
+não converta `#N` implicitamente.
 
 ## Passos
 
@@ -61,30 +64,32 @@ Identificador da issue (`AGB-N`).
    Liste os comandos exatos na issue, não uma descrição genérica de "rodar os
    testes".
 
-4. **Gravar uma seção "Handoff para o agente"** na descrição da issue (ou em
-   um comentário, se preferir preservar a descrição original) com: Objetivo,
-   Escopo, Fora do escopo, Arquivos prováveis, Comandos de verificação. Mostre
-   o diff ao usuário e confirme antes de gravar com `mcp__linear__save_issue`
-   (descrição) ou `mcp__linear__save_comment` (comentário). Se já existir uma
-   seção "Handoff para o agente" de uma execução anterior, substitua-a em vez
-   de duplicar.
+4. **Gravar uma seção "Handoff para o agente"** na descrição da issue com:
+   Objetivo, Escopo, Fora do escopo, Dependências, Critérios de aceite,
+   Arquivos prováveis e Comandos de verificação. Mostre o diff ao usuário e
+   confirme antes de gravar com `mcp__linear__save_issue`, exceto quando o
+   pedido já autorizar claramente a atualização. Se a seção já existir,
+   substitua-a por patch em vez de duplicar ou reenviar texto desatualizado.
 
 5. **Aplicar a label `agent:ready`** somente se todos os itens acima
    estiverem completos e sem ambiguidade — ou seja, um agente conseguiria
    implementar sem precisar perguntar nada a mais.
    - Verifique se a label existe no time com `mcp__linear__list_issue_labels`
-     (`team: "AGB"`); crie com `mcp__linear__create_issue_label` somente se
-     ainda não existir.
-   - Aplique a label à issue com `mcp__linear__save_issue` e mova o estado
-     para **ToDo**. Confirme com o usuário antes de gravar, exceto quando o
-     pedido já autorizar claramente essa gravação (ex.: "prepare a AGB-10 e
-     já marque como pronta").
+     (`team: "AGB"`); crie com `mcp__linear__save_issue_label` ou
+     `mcp__linear__create_issue_label` somente se ainda não existir.
+   - Releia a issue imediatamente antes da transição. Aplique `agent:ready`,
+     remova `needs:spec`/`agent:blocked` quando seus motivos tiverem sido
+     resolvidos e mova **Triagem → ToDo** com `mcp__linear__save_issue`.
+   - Releia a issue depois da escrita e só declare sucesso se estado e labels
+     tiverem os valores esperados.
 
    Se algo ainda faltar, **não aplique `agent:ready` nem mova para `ToDo`**:
-   aplique (ou recomende) a label `needs:spec` ou `agent:blocked` — criando-a
-   da mesma forma se ainda não existir — e deixe um comentário na issue
-   (`mcp__linear__save_comment`) listando exatamente o que está bloqueando o
-   status de "pronta para agente".
+   aplique `needs:spec` quando faltarem decisões/aceites ou `agent:blocked`
+   quando houver uma dependência externa — criando a label somente se ainda
+   não existir — e deixe um comentário com marcador
+   `<!-- agentboard-readiness -->` listando exatamente o bloqueio. Antes de
+   comentar, consulte os comentários e atualize/reuse o registro existente
+   com esse marcador para que retries sejam idempotentes.
 
 ## Limites
 
