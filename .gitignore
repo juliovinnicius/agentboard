@@ -30,3 +30,7 @@ coverage/
 # Logs
 *.log
 npm-debug.log*
+
+.tlc/harness/state/
+.cursor/hooks.json
+.claude/settings.json
