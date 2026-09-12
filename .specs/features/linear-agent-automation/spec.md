@@ -112,14 +112,14 @@ AgentBoard has working application foundations and CI, but its agent workflows a
 
 | Requirement ID | Story | Phase | Status |
 | --- | --- | --- | --- |
-| AUTO-01 | P1: discoverable skills | Execute | Pending |
-| AUTO-02 | P1: Linear operations | Execute | Pending |
-| AUTO-03 | P1: PR linking | Execute | Pending |
-| AUTO-04 | P1: safe completion | Execute | Pending |
+| AUTO-01 | P1: discoverable skills | Execute | Verified |
+| AUTO-02 | P1: Linear operations | Execute | Verified |
+| AUTO-03 | P1: PR linking | Execute | Verified |
+| AUTO-04 | P1: safe completion | Execute | Verified |
 | AUTO-05 | P1: protected main | Execute | Pending |
 | AUTO-06 | P1: Linear metadata | Execute | Pending |
 | AUTO-07 | P1: issue reconciliation | Execute | Pending |
-| AUTO-08 | P2: harness hygiene | Execute | Pending |
+| AUTO-08 | P2: harness hygiene | Execute | Verified |
 
 **Coverage:** 8 total, 8 mapped to tasks, 0 unmapped.
 

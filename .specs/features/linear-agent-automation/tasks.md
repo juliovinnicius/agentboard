@@ -44,6 +44,8 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 
 ### T1: Record the automation contract
 
+**Status**: ✅ Complete
+
 **What**: Persist the specification, decisions, design, and execution plan as one feature contract.
 **Where**: `.specs/STATE.md`, `.specs/features/linear-agent-automation/`
 **Depends on**: None
@@ -56,6 +58,8 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 **Commit**: `docs(automation): record Linear workflow specification`
 
 ### T2: Finalize the TLC harness tracking boundary
+
+**Status**: ✅ Complete
 
 **What**: Track stable harness configuration while ignoring generated runtime state.
 **Where**: `.gitignore`, `.tlc/harness/config.json`
@@ -70,6 +74,8 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 
 ### T3: Port triage-agentboard
 
+**Status**: ✅ Complete
+
 **What**: Install the triage workflow in the Codex repository skill path and align its transitions and validation with this contract.
 **Where**: `.agents/skills/triage-agentboard/SKILL.md`
 **Depends on**: T2
@@ -82,6 +88,8 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 **Commit**: `feat(skills): port AgentBoard triage to Codex`
 
 ### T4: Port prepare-agentboard-issue
+
+**Status**: ✅ Complete
 
 **What**: Replace the GitHub-based preparation skill with a Linear-native readiness workflow.
 **Where**: `.agents/skills/prepare-agentboard-issue/SKILL.md`
@@ -96,6 +104,8 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 
 ### T5: Port implement-agentboard-issue
 
+**Status**: ✅ Complete
+
 **What**: Make implementation read/update Linear while using GitHub only for branch, PR, CI, and review evidence.
 **Where**: `.agents/skills/implement-agentboard-issue/SKILL.md`
 **Depends on**: T4
@@ -108,6 +118,8 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 **Commit**: `feat(skills): implement Linear-backed AgentBoard issues`
 
 ### T6: Port review-agentboard-pr
+
+**Status**: ✅ Complete
 
 **What**: Make PR review reconcile its Linear issue through safe `In Progress`, `In Review`, and `Done` guards.
 **Where**: `.agents/skills/review-agentboard-pr/SKILL.md`
@@ -122,6 +134,8 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 
 ### T7: Reconcile Linear automation metadata
 
+**Status**: ⏳ Blocked on issue-template UI access; labels and AGB-7 reconciliation complete
+
 **What**: Create the five labels, mark AGB-7's specification blockers, create the issue template if supported, and reconcile AGB-10 only from branch evidence.
 **Where**: AgentBoard team and AGB-7/AGB-10 in Linear
 **Depends on**: T6
@@ -134,6 +148,8 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 **Commit**: none (external state only)
 
 ### T8: Protect main and close the verified loop
+
+**Status**: ⏳ Blocked on authenticated GitHub settings access; AGB-10 remains open
 
 **What**: Configure GitHub protection, verify both required checks, then finish AGB-10 and publish the feature branch/PR.
 **Where**: GitHub repository settings, Linear AGB-10, remote branch/PR
