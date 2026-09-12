@@ -1,6 +1,6 @@
 ---
 name: review-agentboard-pr
-description: Revisa um PR do GitHub contra os critérios de aceite da issue Linear (AGB-N) referenciada nele - compara o diff, consulta o status real da CI, procura regressões/problemas de segurança/ausência de testes, e comenta/solicita mudanças no PR movendo a issue Linear para In Review ou de volta para In Progress. Nunca aprova nem faz merge, e só move para Done quando o merge já ocorreu e for explicitamente autorizado. Use quando o usuário pedir para revisar ou dar parecer sobre um PR aberto.
+description: Revisa um PR do GitHub contra a issue Linear AGB-N, verifica critérios, testes, segurança e CI, e reconcilia In Progress, In Review ou Done. Nunca aprova nem faz merge; Done exige aprovação humana e merge confirmado. Use quando o usuário pedir revisão de um PR do AgentBoard.
 ---
 
 # review-agentboard-pr
@@ -13,19 +13,24 @@ Linear.
 ## Pré-requisito: MCP do Linear
 
 Depende de `mcp__linear__get_issue`, `mcp__linear__save_issue`,
-`mcp__linear__save_comment`, `mcp__linear__list_issue_statuses`. Se essas
-ferramentas não estiverem disponíveis, pare e explique como configurar o
-conector do Linear (ver `triage-agentboard/SKILL.md`) — não simule o estado
-da issue com labels do GitHub como substituto.
+`mcp__linear__list_comments`, `mcp__linear__save_comment`,
+`mcp__linear__list_issue_statuses`. Se essas ferramentas não estiverem
+disponíveis, pare e explique como configurar o conector do Linear (ver
+`triage-agentboard/SKILL.md`) — não simule o estado da issue com labels do
+GitHub como substituto.
 
 ## Entrada
 
 Número ou URL do PR no GitHub.
 
+Quando a entrada for um número, valide que é um inteiro positivo antes de
+consultar o GitHub.
+
 ## Passos
 
-1. **Coletar contexto**: `gh pr view <n> --json title,body,files,commits,url`,
-   `gh pr diff <n>`. Extraia o identificador `AGB-N` referenciado no corpo do
+1. **Coletar contexto**: leia título, corpo, arquivos, commits, autor, URL,
+   reviews, checks, estado e `mergedAt` do PR; depois leia o diff. Use `gh` ou
+   o conector GitHub disponível. Extraia o identificador `AGB-N` do corpo do
    PR (branch `agb-N-...` ou texto `AGB-N` no corpo) e leia a issue com
    `mcp__linear__get_issue`, incluindo seus critérios de aceite. Se não
    houver identificador Linear localizável, reporte isso como um problema em
@@ -36,10 +41,10 @@ Número ou URL do PR no GitHub.
    rodado). "O código parece cobrir isso" não é evidência suficiente sem um
    teste ou execução que comprove.
 
-3. **Consultar o resultado real da CI**: `gh pr checks <n>` (ou
-   `gh pr view <n> --json statusCheckRollup`). Nunca presuma ou invente um
-   resultado — se ainda estiver rodando, diga isso explicitamente; relate os
-   jobs que falharam, se houver.
+3. **Consultar o resultado real da CI**: confirme no status rollup que
+   `Backend (lint, test, build)` e `Frontend (lint, typecheck, build)` foram
+   concluídos com sucesso. Nunca presuma ou invente um resultado; se estiver
+   rodando, permaneça no estado atual e relate isso, e se falhar, cite os jobs.
 
 4. **Procurar regressões**: preste atenção redobrada a mudanças em peças
    compartilhadas do projeto — `ValidationPipe` global, filtro global de
@@ -64,17 +69,18 @@ Número ou URL do PR no GitHub.
    invocada para revisar um PR — não é preciso confirmar cada gravação
    individualmente, mas o veredito em si deve ser exposto ao usuário antes ou
    junto da publicação.
-   - **Critérios atendidos, CI verde, sem regressão, sem achado de
+   - **Critérios atendidos, ambos os checks verdes, sem regressão, sem achado de
      segurança, testes presentes** → comente o parecer positivo no PR
      (`gh pr review <n> --comment`), mantenha/mova a issue Linear para
-     **In Review** (`mcp__linear__save_issue`) e recomende revisão humana
-     adicional antes do merge.
+     **In Review** (`mcp__linear__save_issue`) e aplique `human:required`
+     enquanto não houver aprovação humana válida.
    - **Qualquer lacuna encontrada** (critério não atendido, CI vermelha,
      regressão, achado de segurança, teste faltando) → `gh pr review <n>
      --request-changes` com a lista específica do que falta, devolva a issue
      para **In Progress** (`mcp__linear__save_issue`) e registre no Linear
-     (`mcp__linear__save_comment`) exatamente o que está bloqueando —
-     verifique antes que o mesmo comentário não exista já, para não duplicar.
+     (`mcp__linear__save_comment`) exatamente o que está bloqueando. Use o
+     marcador `<!-- agentboard-review -->` e atualize o comentário existente
+     em retries, em vez de duplicá-lo.
 
 8. **Nunca aprove silenciosamente mudanças críticas**: mudanças que tocam
    segurança, dados, ou as peças compartilhadas do passo 4 exigem que o
@@ -82,10 +88,17 @@ Número ou URL do PR no GitHub.
    positivo — esta skill nunca roda `gh pr review <n> --approve` nem
    `gh pr merge` por conta própria.
 
-9. **Mover para `Done`** somente se o PR já estiver com `state: MERGED`
-   (confirme com `gh pr view <n> --json state,mergedAt`) **e** o usuário
-   tiver autorizado explicitamente esse movimento nesta conversa — este passo
-   nunca é automático, mesmo com parecer positivo e CI verde.
+9. **Fechar o ciclo com segurança**: considere humana apenas uma review mais
+   recente em estado `APPROVED`, feita por conta diferente do autor do PR e
+   cujo login não termine em `[bot]`.
+   - Se os dois checks estão verdes e há aprovação humana, mas o PR ainda não
+     foi mergeado, mantenha **In Review**.
+   - Se os dois checks estão verdes, há aprovação humana válida e o GitHub
+     confirma `state: MERGED` com `mergedAt`, mova a issue para **Done**,
+     remova `human:required` e registre no comentário de revisão quem aprovou,
+     o instante do merge e os checks verificados.
+   - Releia a issue após qualquer transição. Se o postcondition não bater,
+     pare e reporte a falha parcial; não anuncie `Done` por inferência.
 
 ## Limites
 
