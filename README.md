@@ -170,5 +170,13 @@ make build     # build dos dois projetos
 ## Fora do escopo desta etapa
 
 Autenticação, modelos de domínio (`User`, `Project`, `Task`, ...), integrações
-de IA, CI, serviços de aplicação em containers e qualquer interface além da
+de IA, serviços de aplicação em containers e qualquer interface além da
 página inicial.
+
+## CI e qualidade
+
+O workflow `.github/workflows/ci.yml` roda em todo push e pull request para
+`main`: lint, testes (unitários + e2e do backend, com Postgres efêmero) e
+build dos dois pacotes. Localmente, um hook de pre-commit (husky +
+lint-staged, configurados na raiz) roda lint automaticamente nos arquivos
+staged de cada pacote antes de cada commit.

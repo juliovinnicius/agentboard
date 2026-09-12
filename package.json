@@ -1,0 +1,12 @@
+{
+  "name": "agentboard",
+  "private": true,
+  "description": "Repo-wide tooling (pre-commit hooks). App code lives in backend/ and frontend/, each its own npm package.",
+  "scripts": {
+    "prepare": "husky"
+  },
+  "devDependencies": {
+    "husky": "^9.1.7",
+    "lint-staged": "^17.5.1"
+  }
+}
