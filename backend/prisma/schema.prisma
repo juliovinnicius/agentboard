@@ -1,0 +1,16 @@
+// Prisma schema for AgentBoard.
+//
+// Foundation stage: only the PostgreSQL connection is configured. Domain
+// models are intentionally absent and will be added in a later step.
+//
+// The connection string is provided by DATABASE_URL (see prisma7.config.ts
+// for the CLI and PrismaService for the runtime client).
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
