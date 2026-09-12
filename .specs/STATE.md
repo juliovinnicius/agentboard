@@ -37,10 +37,10 @@
 ## Handoff
 
 - **Feature**: linear-agent-automation / `.specs/features/linear-agent-automation`
-- **Phase / Task**: Planning complete; Execute starts at T1
-- **Completed**: none
-- **In-progress** (file:line): none
-- **Next step**: Commit the approved specification artifacts, then finalize the TLC harness boundary.
-- **Blockers**: GitHub CLI token is invalid; browser session will be used for branch administration and PR UI if authenticated.
-- **Uncommitted files**: `.gitignore`, `.claude/skills/`, `.tlc/`, `.specs/`
+- **Phase / Task**: Execute complete for repository-scoped work; external T7/T8 blocked
+- **Completed**: T1–T6; labels and AGB-7 reconciliation; feature branch published
+- **In-progress** (external): T7 issue template; T8 branch protection, AGB-10 closure, PR creation
+- **Next step**: An administrator must create the Linear template and protect `main`; then close AGB-10 and open the PR.
+- **Blockers**: GitHub connector lacks administration/PR-write permission (403); browser session unavailable; Linear template API is not exposed.
+- **Uncommitted files**: none
 - **Branch**: `chore/linear-agent-automation`
