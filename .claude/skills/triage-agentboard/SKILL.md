@@ -18,7 +18,7 @@ Esta skill depende das ferramentas MCP do Linear (`mcp__linear__get_issue`,
 `mcp__linear__save_issue`, `mcp__linear__list_issue_statuses`, etc.). Se essas
 ferramentas não estiverem disponíveis nesta sessão, **pare e explique como
 configurar o conector do Linear** (ver "Configuração do MCP do Linear" ao
-final) — nunca volte silenciosamente a usar `gh issue` como substituto.
+final) — nunca use GitHub Issues como substituto.
 
 ## Entrada
 
@@ -29,6 +29,9 @@ final) — nunca volte silenciosamente a usar `gh issue` como substituto.
 Se vier só um rascunho, pergunte apenas se o "o quê" for genuinamente
 ambíguo; caso contrário assuma o objetivo mais razoável, prossiga e declare a
 suposição em uma linha.
+
+Quando vier um identificador, valide-o como `AGB-[1-9][0-9]*` antes de chamar
+o Linear. Não aceite apenas um número e não converta `#N` implicitamente.
 
 ## Contexto do projeto a considerar
 
@@ -45,7 +48,7 @@ a sinalizar, não a resolver aqui.
 
 1. **Coletar contexto**: leia a issue com `mcp__linear__get_issue`
    (identificador `AGB-N`) e os comentários com `mcp__linear__list_comments`.
-   Explore o repo (`Explore`/`grep`) só o suficiente para confirmar se a área
+   Explore o repo (`rg`/`rg --files`) só o suficiente para confirmar se a área
    citada (backend, frontend, infra) existe hoje.
 
 2. **Normalizar título**: frase curta, no imperativo, sem vaguidade
@@ -58,11 +61,10 @@ a sinalizar, não a resolver aqui.
    - **Fora do escopo** — o que essa issue deliberadamente não cobre.
 
 4. **Detectar duplicatas dentro do time AgentBoard**: busque por palavras-chave
-   com `mcp__linear__list_issues` (filtrando pelo time `AGB`) ou
-   `mcp__linear__search_documentation` quando aplicável. Se houver uma issue
-   claramente equivalente, reporte o link ao usuário e pergunte antes de
-   marcar como `Duplicate` — mudar o estado de uma issue no Linear é uma ação
-   visível, não faça sem confirmação.
+   com `mcp__linear__list_issues` filtrando pelo time `AGB`. Se houver uma
+   issue claramente equivalente, reporte o link ao usuário e pergunte antes
+   de marcar como `Duplicate` — mudar o estado de uma issue no Linear é uma
+   ação visível, não faça sem confirmação.
 
 5. **Detectar dependências e bloqueios**: verifique relações da issue no
    Linear (bloqueada por / bloqueia, relacionada a — conforme exposto por
@@ -103,16 +105,14 @@ a sinalizar, não a resolver aqui.
 ## Configuração do MCP do Linear
 
 Se as ferramentas `mcp__linear__*` não aparecerem na lista de ferramentas
-desta sessão:
+desta sessão do Codex:
 
-1. Confirme com o usuário se o conector/MCP do Linear está habilitado para
-   esta sessão do Claude Code (`/mcp` lista os servidores MCP conectados).
-2. Se não estiver, oriente o usuário a habilitar o conector do Linear nas
-   configurações do Claude Code (ou via `claude mcp add`, dependendo de como
-   os demais conectores deste ambiente foram configurados) e autenticar com
-   um workspace que inclua o time **AgentBoard** (`AGB`).
+1. Oriente o usuário a configurar o MCP local com
+   `codex mcp add linear --url https://mcp.linear.app/mcp` e concluir o login.
+2. Confirme que a autenticação usa um workspace que inclua o time
+   **AgentBoard** (`AGB`).
 3. Depois de conectado, confirme o acesso chamando `mcp__linear__get_team`
-   com `"AGB"` antes de prosseguir com a triagem.
+   com a query `AGB` antes de prosseguir com a triagem.
 
-Não prossiga a triagem usando `gh issue` como alternativa — isso reintroduz o
+Não prossiga a triagem usando GitHub Issues como alternativa — isso reintroduz o
 problema que esta skill existe para evitar.
