@@ -1,101 +1,102 @@
 # AgentBoard
 
-AI assisted development lab. This repository is the **foundation stage**: a
-running frontend, a running API, a PostgreSQL container and the quality tooling
-around them. There is no business domain yet — no auth, no models, no features.
+Laboratório de desenvolvimento assistido por IA. Este repositório está na
+**etapa de fundação**: um frontend rodando, uma API rodando, um container
+PostgreSQL e as ferramentas de qualidade ao redor deles. Ainda não há domínio
+de negócio — sem autenticação, sem modelos, sem funcionalidades.
 
 ## Stack
 
-| Layer    | Tools                                                                             |
-| -------- | --------------------------------------------------------------------------------- |
-| Frontend | Next.js 16 (App Router), TypeScript, Tailwind CSS 4, shadcn/ui, ESLint, Prettier   |
-| Backend  | NestJS 12, TypeScript, Prisma 7, Swagger, class-validator/transformer, ESLint, Prettier |
-| Database | PostgreSQL 18 in Docker                                                           |
-| Tooling  | Docker Compose, Makefile, plain monorepo: two independent npm packages   |
+| Camada    | Ferramentas                                                                             |
+| --------- | --------------------------------------------------------------------------------------- |
+| Frontend  | Next.js 16 (App Router), TypeScript, Tailwind CSS 4, shadcn/ui, ESLint, Prettier         |
+| Backend   | NestJS 12, TypeScript, Prisma 7, Swagger, class-validator/transformer, ESLint, Prettier  |
+| Banco de dados | PostgreSQL 18 em Docker                                                             |
+| Ferramental | Docker Compose, Makefile, monorepo simples: dois pacotes npm independentes             |
 
-## Repository layout
+## Estrutura do repositório
 
 ```text
 agentboard/
-├── backend/            NestJS API
-│   ├── prisma/         schema (connection only, no models yet)
+├── backend/            API NestJS
+│   ├── prisma/         schema (apenas conexão, ainda sem modelos)
 │   └── src/
-│       ├── common/     cross-cutting pieces (global exception filter)
-│       ├── config/     environment validation
+│       ├── common/     partes transversais (filtro global de exceções)
+│       ├── config/     validação de ambiente
 │       ├── health/     GET /api/v1/health
 │       └── prisma/     PrismaService / PrismaModule
-├── frontend/           Next.js app
+├── frontend/           app Next.js
 │   └── src/
-│       ├── app/        App Router entry points
-│       ├── components/ shared components (ui/ is shadcn-generated)
-│       ├── features/   feature-scoped code (health/)
-│       ├── hooks/      React hooks
-│       ├── lib/        framework-agnostic helpers
-│       ├── services/   HTTP access to the API
-│       └── types/      shared types
-├── docker-compose.yml  local PostgreSQL only
-└── Makefile            developer entry points
+│       ├── app/        pontos de entrada do App Router
+│       ├── components/ componentes compartilhados (ui/ gerado pelo shadcn)
+│       ├── features/   código por funcionalidade (health/)
+│       ├── hooks/      hooks React
+│       ├── lib/        helpers agnósticos de framework
+│       ├── services/   acesso HTTP à API
+│       └── types/      tipos compartilhados
+├── docker-compose.yml  apenas PostgreSQL local
+└── Makefile            pontos de entrada para desenvolvimento
 ```
 
-## Prerequisites
+## Pré-requisitos
 
-- Node.js 22 LTS or newer (developed on Node 24)
+- Node.js 22 LTS ou mais recente (desenvolvido no Node 24)
 - npm 10+
-- Docker with Compose v2
+- Docker com Compose v2
 
-## 1. Environment variables
+## 1. Variáveis de ambiente
 
 ```bash
 make env
 ```
 
-That copies the three examples if they do not exist yet:
+Isso copia os três exemplos caso ainda não existam:
 
-| File                   | Used by            | Keys                                                      |
-| ---------------------- | ------------------ | --------------------------------------------------------- |
+| Arquivo                | Usado por          | Chaves                                                     |
+| ---------------------- | ------------------ | ----------------------------------------------------------- |
 | `.env`                 | docker-compose     | `POSTGRES_USER`, `POSTGRES_PASSWORD`, `POSTGRES_DB`, `POSTGRES_PORT` |
-| `backend/.env`         | NestJS and Prisma  | `DATABASE_URL`, `PORT`, `CORS_ORIGIN`, `NODE_ENV`         |
-| `frontend/.env.local`  | Next.js            | `NEXT_PUBLIC_API_URL`                                     |
+| `backend/.env`         | NestJS e Prisma    | `DATABASE_URL`, `PORT`, `CORS_ORIGIN`, `NODE_ENV`           |
+| `frontend/.env.local`  | Next.js            | `NEXT_PUBLIC_API_URL`                                       |
 
-Then edit them: set a local password in `.env` and use the same user, password,
-database and port inside `backend/.env`'s `DATABASE_URL`. None of these files
-are versioned — only the `.env.example` files are.
+Depois edite-os: defina uma senha local em `.env` e use o mesmo usuário, senha,
+banco de dados e porta na `DATABASE_URL` do `backend/.env`. Nenhum desses
+arquivos é versionado — apenas os arquivos `.env.example` são.
 
-## 2. Start PostgreSQL
+## 2. Iniciar o PostgreSQL
 
 ```bash
 make db-up     # docker compose up -d --wait
-make db-logs   # follow the container logs
-make db-down   # stop it, keeping the data volume
+make db-logs   # acompanhar os logs do container
+make db-down   # parar, mantendo o volume de dados
 ```
 
-`make db-up` returns only after the container healthcheck passes.
+`make db-up` só retorna depois que o healthcheck do container passa.
 
-## 3. Install dependencies
+## 3. Instalar dependências
 
 ```bash
 make install
 ```
 
-Backend `postinstall` runs `prisma generate`, which writes the client to
-`backend/src/generated/prisma` (git-ignored).
+O `postinstall` do backend executa `prisma generate`, que escreve o client em
+`backend/src/generated/prisma` (ignorado pelo git).
 
-## 4. Start the backend
+## 4. Iniciar o backend
 
 ```bash
 make backend   # cd backend && npm run start:dev
 ```
 
-## 5. Start the frontend
+## 5. Iniciar o frontend
 
 ```bash
 make frontend  # cd frontend && npm run dev
 ```
 
-The home page shows `AgentBoard / AI Assisted Development Lab` and calls the
-health endpoint, rendering `Backend Status: Online` or `Backend Status: Offline`.
+A página inicial exibe `AgentBoard / AI Assisted Development Lab` e chama o
+endpoint de health, mostrando `Backend Status: Online` ou `Backend Status: Offline`.
 
-## Local URLs
+## URLs locais
 
 ```text
 Frontend:
@@ -111,7 +112,7 @@ Health:
 http://localhost:3001/api/v1/health
 ```
 
-The health endpoint answers:
+O endpoint de health responde:
 
 ```json
 { "status": "ok" }
@@ -122,14 +123,14 @@ The health endpoint answers:
 ### Backend (`cd backend`)
 
 ```bash
-npm run start:dev      # watch mode
+npm run start:dev      # modo watch
 npm run build          # nest build
 npm run lint           # eslint
-npm run test           # vitest unit tests
-npm run test:e2e       # vitest e2e tests
+npm run test           # testes unitários vitest
+npm run test:e2e       # testes e2e vitest
 npm run format         # prettier --write
 npm run prisma:generate
-npm run prisma:migrate # once domain models exist
+npm run prisma:migrate # quando existirem modelos de domínio
 ```
 
 ### Frontend (`cd frontend`)
@@ -142,30 +143,32 @@ npm run typecheck      # next typegen && tsc --noEmit
 npm run format
 ```
 
-### Repository root
+### Raiz do repositório
 
 ```bash
-make help      # list every target
-make lint      # lint both projects
-make test      # backend unit + e2e tests
-make build     # build both projects
+make help      # lista todos os targets
+make lint      # lint dos dois projetos
+make test      # testes unitários + e2e do backend
+make build     # build dos dois projetos
 ```
 
-## API conventions
+## Convenções da API
 
-- Global prefix `/api`, URI versioning with `v1` as the default, so routes live
-  under `/api/v1/...`.
-- Swagger UI at `/api/docs`, outside the version prefix.
-- A global `ValidationPipe` (`whitelist`, `forbidNonWhitelisted`, `transform`,
-  implicit conversion) validates and transforms every DTO.
-- A global exception filter turns thrown errors into
-  `{ statusCode, message, error, path, timestamp }` and never leaks stack traces.
-  Requests that match no route are still answered by Express' own 404.
-- `CORS_ORIGIN` accepts a comma-separated list of origins, or `*`.
-- Startup fails fast with a readable message when the environment is invalid
-  (see `backend/src/config/env.validation.ts`).
+- Prefixo global `/api`, versionamento por URI com `v1` como padrão, então as
+  rotas ficam em `/api/v1/...`.
+- Swagger UI em `/api/docs`, fora do prefixo de versão.
+- Um `ValidationPipe` global (`whitelist`, `forbidNonWhitelisted`, `transform`,
+  conversão implícita) valida e transforma todo DTO.
+- Um filtro global de exceções converte erros lançados em
+  `{ statusCode, message, error, path, timestamp }` e nunca vaza stack traces.
+  Requisições que não correspondem a nenhuma rota ainda são respondidas pelo
+  404 padrão do Express.
+- `CORS_ORIGIN` aceita uma lista de origens separadas por vírgula, ou `*`.
+- A inicialização falha rapidamente com uma mensagem legível quando o ambiente
+  é inválido (veja `backend/src/config/env.validation.ts`).
 
-## Not in this stage
+## Fora do escopo desta etapa
 
-Authentication, domain models (`User`, `Project`, `Task`, ...), AI integrations,
-CI, containerized app services and any UI beyond the landing page.
+Autenticação, modelos de domínio (`User`, `Project`, `Task`, ...), integrações
+de IA, CI, serviços de aplicação em containers e qualquer interface além da
+página inicial.
