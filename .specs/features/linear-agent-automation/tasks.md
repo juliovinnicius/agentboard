@@ -149,7 +149,7 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 
 ### T8: Protect main and close the verified loop
 
-**Status**: ⏳ Blocked on authenticated GitHub settings access; AGB-10 remains open
+**Status**: ⏳ PR #1 open with CI green; blocked on branch protection, human review, merge, and AGB-10 closure
 
 **What**: Configure GitHub protection, verify both required checks, then finish AGB-10 and publish the feature branch/PR.
 **Where**: GitHub repository settings, Linear AGB-10, remote branch/PR

@@ -1,6 +1,6 @@
 # Linear Agent Automation Validation
 
-**Date**: 2026-09-12  
+**Date**: 2026-09-13
 **Spec**: `.specs/features/linear-agent-automation/spec.md`  
 **Diff range**: `16554c5..HEAD` (`2bd47a3`)  
 **Verifier**: independent sub-agent (author ≠ verifier)
@@ -16,7 +16,7 @@
 | T5 | ✅ Done | Linear-native implementation skill exists and validator passes. |
 | T6 | ✅ Done | Guarded review skill exists and validator passes. |
 | T7 | ⚠️ Partial | Five labels and AGB-7 reconciliation verified; Linear template read-back is empty. |
-| T8 | ❌ Blocked | GitHub read-back reports `main` unprotected; no reviewable PR evidence was available. |
+| T8 | ⚠️ Partial | PR #1 is open and both CI jobs passed; GitHub read-back still reports `main` unprotected. |
 
 ## Spec-Anchored Acceptance Criteria
 
@@ -31,7 +31,7 @@
 | PR review required; force pushes/deletions disabled | Branch protection settings enforce review and keep destructive operations disabled | No successful GitHub settings read-back; branch currently unprotected | ❌ GAP |
 | Automation labels exist | Five exact AgentBoard labels | Linear `list_issue_labels(team=AGB)` returned `agent:ready`, `agent:blocked`, `needs:spec`, `human:required`, `risk:high` | ✅ PASS |
 | AGB-7 remains open with spec blockers and explanatory comment | `Triagem`, `needs:spec`, `human:required`, unresolved criteria comment | Linear `get_issue(AGB-7)` and `list_comments` read-back: state `Triagem`, both labels, marker `agentboard-readiness`, four unresolved decision groups | ✅ PASS |
-| AGB-10 remains open until protection and evidence exist; then Done | Current evidence is insufficient, so it must remain open | Linear `get_issue(AGB-10)` read-back: `ToDo`; correct safe state while GitHub says unprotected | ✅ PASS |
+| AGB-10 remains open until protection and evidence exist; then Done | CI is green but protection/review/merge are incomplete, so it must remain open | Linear read-back: `In Review` with `human:required` and PR #1 attached; GitHub reports both CI jobs successful and `main` unprotected | ✅ PASS |
 | Agent-ready template includes nine required sections if creation is supported | Template includes Context, Objective, Scope, Out of scope, Dependencies, Acceptance criteria, Likely files, Verification commands, Agent handoff | Linear `list_templates(team=AGB,type=issue)` returned `templates: []`; no template evidence | ❌ GAP (blocked external write) |
 | Harness config is trackable and runtime state ignored | Config visible; `.tlc/harness/state/` ignored | `.gitignore:34`; `.tlc/harness/config.json:1`; `git check-ignore` matched state path | ✅ PASS |
 | Existing application quality gates remain green | Existing test count preserved and builds pass | Escalated gate: backend/frontend lint pass, 3 unit tests pass, 1 E2E pass, backend build pass; frontend Webpack build pass | ✅ PASS |
@@ -79,7 +79,7 @@ The feature diff contains Markdown, JSON, symlinked skill entries and external t
 
 1. **Blocker — protect `main`** (AUTO-05): apply GitHub branch protection requiring PR review, exact CI checks, up-to-date branches, and disabled force-push/deletion; re-read the branch endpoint.
 2. **Major — finish T7 template** (AUTO-06): create the Linear issue template through authenticated UI or supported API, then re-read it and confirm all nine sections.
-3. **Major — close T8 only after evidence** (AUTO-07): add AGB-10 evidence comment and move it to `Done` only after protection read-back; push the feature branch and expose a reviewable PR.
+3. **Major — close T8 only after evidence** (AUTO-07): keep AGB-10 in `In Review` until protection read-back, human approval, and merge are all confirmed. PR #1 and its green CI are already linked.
 
 ## Requirement Traceability Update
 
@@ -102,4 +102,4 @@ The feature diff contains Markdown, JSON, symlinked skill entries and external t
 **Sensor**: structural checks pass; no runtime behavior mutant applicable.
 **Gate**: application checks pass under escalated environment; Turbopack fallback documented.
 
-**Next steps**: protect `main`, create/read back the Linear template, then reconcile AGB-10 and publish the PR.
+**Next steps**: protect `main`, create/read back the Linear template, obtain human review, merge PR #1, then reconcile AGB-10 to `Done`.
