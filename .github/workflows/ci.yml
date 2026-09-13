@@ -47,6 +47,10 @@ jobs:
         working-directory: backend
         run: npm ci
 
+      - name: Apply database migrations
+        working-directory: backend
+        run: npx prisma migrate deploy
+
       - name: Lint
         working-directory: backend
         run: npm run lint

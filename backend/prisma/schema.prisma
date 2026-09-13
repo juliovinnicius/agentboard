@@ -1,7 +1,7 @@
 // Prisma schema for AgentBoard.
 //
-// Foundation stage: only the PostgreSQL connection is configured. Domain
-// models are intentionally absent and will be added in a later step.
+// Domain models for the AgentBoard MVP. Historical records are retained;
+// projects and tasks are archived instead of deleted.
 //
 // The connection string is provided by DATABASE_URL (see prisma7.config.ts
 // for the CLI and PrismaService for the runtime client).
@@ -13,4 +13,138 @@ generator client {
 
 datasource db {
   provider = "postgresql"
+}
+
+enum MembershipRole {
+  admin
+  member
+}
+
+enum TaskStatus {
+  todo
+  in_progress
+  in_review
+  done
+}
+
+enum ExecutionStatus {
+  queued
+  running
+  succeeded
+  failed
+  canceled
+}
+
+model User {
+  id                String       @id @default(uuid()) @db.Uuid
+  emailNormalized   String       @unique @map("email_normalized")
+  displayName       String       @map("display_name")
+  createdAt         DateTime     @default(now()) @map("created_at")
+  updatedAt         DateTime     @updatedAt @map("updated_at")
+  memberships       Membership[]
+  createdWorkspaces Workspace[]  @relation("WorkspaceCreator")
+  createdProjects   Project[]    @relation("ProjectCreator")
+  createdTasks      Task[]       @relation("TaskCreator")
+  executions        Execution[]  @relation("ExecutionRequester")
+  reviews           Execution[]  @relation("ExecutionReviewer")
+
+  @@map("users")
+}
+
+model Workspace {
+  id          String       @id @default(uuid()) @db.Uuid
+  name        String
+  createdById String       @map("created_by_id") @db.Uuid
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  createdBy   User         @relation("WorkspaceCreator", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  memberships Membership[]
+  projects    Project[]
+
+  @@index([createdById])
+  @@map("workspaces")
+}
+
+model Membership {
+  id          String         @id @default(uuid()) @db.Uuid
+  userId      String         @map("user_id") @db.Uuid
+  workspaceId String         @map("workspace_id") @db.Uuid
+  role        MembershipRole @default(member)
+  removedAt   DateTime?      @map("removed_at")
+  createdAt   DateTime       @default(now()) @map("created_at")
+  updatedAt   DateTime       @updatedAt @map("updated_at")
+  user        User           @relation(fields: [userId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  workspace   Workspace      @relation(fields: [workspaceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([userId, workspaceId])
+  @@index([workspaceId, removedAt])
+  @@map("memberships")
+}
+
+model Project {
+  id          String      @id @default(uuid()) @db.Uuid
+  workspaceId String      @map("workspace_id") @db.Uuid
+  createdById String      @map("created_by_id") @db.Uuid
+  name        String
+  description String?
+  archivedAt  DateTime?   @map("archived_at")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  workspace   Workspace   @relation(fields: [workspaceId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdBy   User        @relation("ProjectCreator", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  tasks       Task[]
+
+  @@index([workspaceId, archivedAt])
+  @@index([createdById])
+  @@map("projects")
+}
+
+model Task {
+  id                 String      @id @default(uuid()) @db.Uuid
+  projectId          String      @map("project_id") @db.Uuid
+  createdById        String      @map("created_by_id") @db.Uuid
+  title              String
+  description        String
+  acceptanceCriteria String      @map("acceptance_criteria")
+  codeContext        String?     @map("code_context")
+  status             TaskStatus  @default(todo)
+  archivedAt         DateTime?   @map("archived_at")
+  createdAt          DateTime    @default(now()) @map("created_at")
+  updatedAt          DateTime    @updatedAt @map("updated_at")
+  project            Project     @relation(fields: [projectId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  createdBy          User        @relation("TaskCreator", fields: [createdById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  executions         Execution[]
+
+  @@index([projectId, status, archivedAt])
+  @@index([createdById])
+  @@map("tasks")
+}
+
+model Execution {
+  id                String          @id @default(uuid()) @db.Uuid
+  taskId            String          @map("task_id") @db.Uuid
+  requestedById     String          @map("requested_by_id") @db.Uuid
+  idempotencyKey    String          @map("idempotency_key")
+  inputSnapshot     Json            @map("input_snapshot")
+  status            ExecutionStatus @default(queued)
+  provider          String?
+  model             String?
+  output            Json?
+  errorMessage      String?         @map("error_message")
+  startedAt         DateTime?       @map("started_at")
+  finishedAt        DateTime?       @map("finished_at")
+  useful            Boolean?
+  reviewComment     String?         @map("review_comment")
+  reviewedById      String?         @map("reviewed_by_id") @db.Uuid
+  reviewedAt        DateTime?       @map("reviewed_at")
+  createdAt         DateTime        @default(now()) @map("created_at")
+  updatedAt         DateTime        @updatedAt @map("updated_at")
+  task              Task            @relation(fields: [taskId], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  requestedBy       User            @relation("ExecutionRequester", fields: [requestedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+  reviewedBy        User?           @relation("ExecutionReviewer", fields: [reviewedById], references: [id], onDelete: Restrict, onUpdate: Cascade)
+
+  @@unique([taskId, idempotencyKey])
+  @@index([taskId, status])
+  @@index([requestedById])
+  @@map("executions")
 }
