@@ -1,0 +1,63 @@
+{
+  "$schema": "https://unpkg.com/@tech-leads-club/harness-toolkit@0.15/schema.json",
+  "version": 1,
+  "projectName": "agentboard",
+  "mode": "paired",
+  "codePaths": [
+    "backend/src",
+    "frontend/src"
+  ],
+  "grind": {
+    "enabled": true,
+    "lintCommand": [
+      "make",
+      "lint"
+    ],
+    "testCommand": [
+      "make",
+      "test"
+    ],
+    "maxLoops": 3
+  },
+  "shipGate": {
+    "enabled": true,
+    "emptyDiffAntiShip": true,
+    "evidenceDir": ".tlc/harness/state/evidence",
+    "runtimePathPrefixes": [
+      "backend/src",
+      "frontend/src"
+    ],
+    "evidenceMaxAgeHours": 24,
+    "claimWindowMinutes": 30
+  },
+  "duplication": {
+    "enabled": true
+  },
+  "supplyChain": {
+    "enabled": true
+  },
+  "subagents": {
+    "enforceAllowlist": true,
+    "allowedModels": [
+      "inherit"
+    ],
+    "blockParentFast": true
+  },
+  "intelligence": {
+    "budgetContinue": true,
+    "idleTurnGate": true,
+    "lessons": {
+      "maxCharsSession": 1600
+    }
+  },
+  "untrustedContent": {
+    "enabled": true
+  },
+  "planGate": {
+    "enabled": true,
+    "windowMinutes": 60
+  },
+  "obs": {
+    "globalSpool": true
+  }
+}

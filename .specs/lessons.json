@@ -1,0 +1,27 @@
+{
+  "schema": 1,
+  "promote_threshold": 2,
+  "window_days": 45,
+  "quarantine_threshold": 2,
+  "next_id": 2,
+  "lessons": [
+    {
+      "id": "L-001",
+      "key": "ac_gap::verify external merge gate configuration through authoritative read back before closing dependent tracker work",
+      "text": "Verify external merge-gate configuration through authoritative read-back before closing dependent tracker work.",
+      "signal": "ac_gap",
+      "scope": "automation",
+      "status": "candidate",
+      "features": [
+        "linear-agent-automation"
+      ],
+      "recurrence": 1,
+      "harmful": 0,
+      "evidence": [
+        "spec.md:59-63 (automation)"
+      ],
+      "created": "2026-09-12T20:52:38Z",
+      "last_seen": "2026-09-12T20:52:38Z"
+    }
+  ]
+}
