@@ -117,7 +117,7 @@ AgentBoard has working application foundations and CI, but its agent workflows a
 | AUTO-03 | P1: PR linking | Execute | Verified |
 | AUTO-04 | P1: safe completion | Execute | Verified |
 | AUTO-05 | P1: protected main | Execute | Pending |
-| AUTO-06 | P1: Linear metadata | Execute | Pending |
+| AUTO-06 | P1: Linear metadata | Execute | Verified |
 | AUTO-07 | P1: issue reconciliation | Execute | Pending |
 | AUTO-08 | P2: harness hygiene | Execute | Verified |
 

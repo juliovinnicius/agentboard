@@ -37,10 +37,10 @@
 ## Handoff
 
 - **Feature**: linear-agent-automation / `.specs/features/linear-agent-automation`
-- **Phase / Task**: Execute complete for repository-scoped work; external T7/T8 blocked
-- **Completed**: T1–T6; labels and AGB-7 reconciliation; feature branch published
-- **In-progress** (external): T7 issue template; T8 branch protection, human review, merge, and AGB-10 closure
-- **Next step**: An administrator must create the Linear template and protect `main`; then a human reviews and merges PR #1 before AGB-10 closes.
-- **Blockers**: GitHub connector lacks administration/PR-write permission (403); browser extension remains unreachable; Linear template API is not exposed.
+- **Phase / Task**: Execute complete through T7; external T8 remains blocked
+- **Completed**: T1–T7; AgentBoard template verified in Linear; PR #1 merged
+- **In-progress** (external): T8 branch protection, missing formal human approval, and AGB-10 closure
+- **Next step**: An administrator must protect `main` and decide how formal human approval is recorded for this already-merged solo-owner PR; then AGB-10 can be reconciled.
+- **Blockers**: GitHub connector lacks administration permission (403); browser extension remains unreachable.
 - **Uncommitted files**: none
 - **Branch**: `chore/linear-agent-automation`
