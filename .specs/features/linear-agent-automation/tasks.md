@@ -134,7 +134,7 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 
 ### T7: Reconcile Linear automation metadata
 
-**Status**: ⏳ Blocked on issue-template UI access; labels and AGB-7 reconciliation complete
+**Status**: ✅ Complete — labels, AGB-7, and the `Agent-ready issue` template were verified through Linear read-back
 
 **What**: Create the five labels, mark AGB-7's specification blockers, create the issue template if supported, and reconcile AGB-10 only from branch evidence.
 **Where**: AgentBoard team and AGB-7/AGB-10 in Linear
@@ -149,7 +149,7 @@ Implement these tasks with the `spec-driven-development` skill: activate it by n
 
 ### T8: Protect main and close the verified loop
 
-**Status**: ⏳ Blocked on authenticated GitHub settings access; AGB-10 remains open
+**Status**: ⏳ PR #1 merged with CI green; blocked on branch protection, missing formal human approval, and AGB-10 closure
 
 **What**: Configure GitHub protection, verify both required checks, then finish AGB-10 and publish the feature branch/PR.
 **Where**: GitHub repository settings, Linear AGB-10, remote branch/PR
